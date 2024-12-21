@@ -1,0 +1,65 @@
+[
+    {
+        "name": "freeProxy01",
+        "hour": 1,
+        "lastTime": 1734796894.16295
+    },
+    {
+        "name": "freeProxy02",
+        "lastTime": 0
+    },
+    {
+        "name": "freeProxy03",
+        "lastTime": 0
+    },
+    {
+        "name": "freeProxy04",
+        "lastTime": 0
+    },
+    {
+        "name": "freeProxy05",
+        "lastTime": 0
+    },
+    {
+        "name": "freeProxy06",
+        "lastTime": 0
+    },
+    {
+        "name": "freeProxy07",
+        "lastTime": 0
+    },
+    {
+        "name": "freeProxy08",
+        "lastTime": 0
+    },
+    {
+        "name": "freeProxy09",
+        "hour": 3,
+        "lastTime": 1734796894.165104
+    },
+    {
+        "name": "freeProxy10",
+        "minute": 10,
+        "lastTime": 1734797756.950764
+    },
+    {
+        "name": "freeProxy11",
+        "lastTime": 0
+    },
+    {
+        "name": "freeProxy12",
+        "lastTime": 0
+    },
+    {
+        "name": "freeProxy13",
+        "lastTime": 0
+    },
+    {
+        "name": "freeProxy14",
+        "lastTime": 0
+    },
+    {
+        "name": "freeProxy15",
+        "lastTime": 0
+    }
+]
