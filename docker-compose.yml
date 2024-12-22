@@ -9,6 +9,6 @@ services:
       - DB_CONN=${DB_CONN:-sqlite:////app/data/pool.db}
       - PROXY_FETCHER_PATH=${PROXY_FETCHER_PATH:-/app/config/proxy_fetcher.json}
     volumes:
-      - ./config/proxy_fetcher.json:/app/proxy_fetcher.json
-      - ./data/pool.db:/app/pool.db
+      - ./config/proxy_fetcher.json:/app/config/proxy_fetcher.json
+      - ./data/pool.db:/app/data/pool.db
 

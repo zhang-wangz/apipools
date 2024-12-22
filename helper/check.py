@@ -23,7 +23,7 @@ class DoValidator(object):
     conf = ConfigHandler()
 
     @classmethod
-    def validator(cls, proxy, work_type, is_socket=False):
+    def validator(cls, proxy, work_type):
         """
         校验入口
         Args:
@@ -32,13 +32,10 @@ class DoValidator(object):
         Returns:
             Proxy Object
         """
-        http_r, https_r, socket4_r, socket5_r = False, False, False, False
-        if not is_socket:
-            http_r = cls.httpValidator(proxy)
-            https_r = cls.httpsValidator(proxy)
-        if is_socket:
-            socket4_r = cls.socket4Validator(proxy)
-            socket5_r =  cls.socket5Validator(proxy)
+        http_r = cls.httpValidator(proxy)
+        https_r = cls.httpsValidator(proxy)
+        socket4_r = cls.socket4Validator(proxy)
+        socket5_r =  cls.socket5Validator(proxy)
 
         proxy.check_count += 1
         proxy.last_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
