@@ -41,19 +41,19 @@ class SqliteClient:
         with self.engine.connect() as conn:
             query = "SELECT * FROM proxies WHERE https = true ORDER BY RANDOM() LIMIT 1"
             result = conn.execute(text(query)).fetchone()
-            return Proxy.createFromJson(dict(result._mapping)) if result else None
+            return dict(result._mapping) if result else None
 
     def get_sockets4(self):
         with self.engine.connect() as conn:
             query = "SELECT * FROM proxies WHERE socket4 = true ORDER BY RANDOM() LIMIT 1"
             result = conn.execute(text(query)).fetchone()
-            return Proxy.createFromJson(dict(result._mapping)) if result else None
+            return dict(result._mapping) if result else None
 
     def get_sockets5(self):
         with self.engine.connect() as conn:
             query = "SELECT * FROM proxies WHERE socket5 = true ORDER BY RANDOM() LIMIT 1"
             result = conn.execute(text(query)).fetchone()
-            return Proxy.createFromJson(dict(result._mapping)) if result else None
+            return dict(result._mapping) if result else None
 
     def get(self, https=False, socket4=False, socket5=False) -> Optional[Proxy]:
         """
