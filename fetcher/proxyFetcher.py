@@ -256,10 +256,101 @@ class ProxyFetcher(object):
                 r'(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\s*</td>\s*<td>\s*<a href=\"/\?port=\d+\">(\d+)</a>', r.text)
             yield from [':'.join(proxy) for proxy in proxies]
 
+    @staticmethod
+    def freeProxy16():
+        # https://github.com/hookzof/socks5_list
+        # https://raw.githubusercontent.com/hookzof/socks5_list/master/proxy.txt
+        url = "https://gh-proxy.com/https://raw.githubusercontent.com/hookzof/socks5_list/master/proxy.txt"
+        urls = [url]
+        for url in urls:
+            r = WebRequest().get(url, timeout=10)
+            proxies = [':'.join(proxy.split(':')[:2]).replace("\r", "") for proxy in r.text.split('\n') if proxy]
+            yield from proxies
+
+    @staticmethod
+    def freeProxy17():
+        # https://github.com/monosans/proxy-list
+        # 1小时
+        url = "https://gh-proxy.com/https://raw.githubusercontent.com/monosans/proxy-list/main/proxies.json"
+        urls = [url]
+        for url in urls:
+            r = WebRequest().get(url, timeout=10)
+            proxies = [f'{proxy["host"]}:{proxy["port"]}' for proxy in r.json if proxy]
+            yield from proxies
+
+
+    @staticmethod
+    def freeProxy18():
+        # https://github.com/mmpx12/proxy-list
+        # 1小时
+        url = "https://gh-proxy.com/https://raw.githubusercontent.com/mmpx12/proxy-list/master/proxies.txt"
+        urls = [url]
+        for url in urls:
+            r = WebRequest().get(url, timeout=10)
+            proxies = []
+            for proxy in r.text.split('\n'):
+                if 'error code' in proxy:
+                    continue
+                try:
+                    proxy = proxy.split('//')[1]
+                    proxies.append(proxy)
+                except Exception:
+                    continue
+            yield from proxies
+
+
+    @staticmethod
+    def freeProxy19():
+        # https://github.com/MuRongPIG/Proxy-Master
+        # 1小时
+        url = "https://gh-proxy.com/https://raw.githubusercontent.com/MuRongPIG/Proxy-Master/main/{}.txt"
+        urls = [url.format(ty) for ty in ['socks4_checked', 'socks5_checked', 'http_checked']]
+        for url in urls:
+            r = WebRequest().get(url, timeout=10)
+            proxies = [":".join(proxy.split(':')[:2]) for proxy in r.text.split('\n') if proxy]
+            yield from proxies
+
+    @staticmethod
+    def freeProxy20():
+        # https://github.com/ALIILAPRO/Proxy
+        # 1小时
+        url = "https://gh-proxy.com/https://raw.githubusercontent.com/ALIILAPRO/Proxy/main/{}.txt"
+        urls = [url.format(ty) for ty in ['http', 'socks4', 'socks5']]
+        for url in urls:
+            r = WebRequest().get(url, timeout=10)
+            proxies = [":".join(proxy.split(':')[:2]).replace('\r', '') for proxy in r.text.split('\n') if proxy]
+            yield from proxies
+
+    @staticmethod
+    def freeProxy21():
+        # https://github.com/Zaeem20/FREE_PROXIES_LIST
+        # 10min
+        url = "https://gh-proxy.com/https://raw.githubusercontent.com/Zaeem20/FREE_PROXIES_LIST/master/{}.txt"
+        urls = [url.format(ty) for ty in ['socks5', 'socks4', 'http', 'https']]
+        for url in urls:
+            r = WebRequest().get(url, timeout=10)
+            proxies = [":".join(proxy.split(':')[:2]).replace('\r', '') for proxy in r.text.split('\n') if proxy]
+            yield from proxies
+
+    @staticmethod
+    def freeProxy22():
+        # https://github.com/roosterkid/openproxylist
+        # 1小时
+        url = "https://gh-proxy.com/https://raw.githubusercontent.com/roosterkid/openproxylist/main/{}.txt"
+        #  'HTTPS'
+        urls = [url.format(ty) for ty in ['SOCKS5', 'SOCKS4', 'HTTPS']]
+        for url in urls:
+            r = WebRequest().get(url, timeout=10)
+            proxies = re.findall(r'(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}):[\s\S]*?(\d+)', r.text)
+            proxies = [':'.join(proxy) for proxy in proxies]
+            yield from proxies
+    
+#
 
 if __name__ == '__main__':
     p = ProxyFetcher()
-    count = 12
-    for ip in p.freeProxy01():
-        a = ip
-        print(a)
+    for u in [p.freeProxy19(), p.freeProxy18(),p.freeProxy17(), p.freeProxy16()]:
+        print(u)
+        for ip in u:
+            print("ip:{}, socket4:{}, socket5:{}".format( ip, "", ""))
+

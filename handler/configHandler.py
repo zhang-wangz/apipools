@@ -36,7 +36,7 @@ class ConfigHandler(withMetaclass(Singleton)):
     @property
     def fetchers(self):
         reload_six(setting)
-        json_path = setting.PROXY_FETCHER_PATH
+        json_path = os.getenv("PROXY_FETCHER_PATH", setting.PROXY_FETCHER_PATH)
         with open(json_path, encoding='utf-8') as file:
             data = json.load(file)
         return data

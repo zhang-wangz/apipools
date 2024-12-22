@@ -4,11 +4,11 @@ services:
     build: .
     container_name: proxy_pool
     ports:
-      - "5010:5010"
-    links:
-      - proxy_redis
+      - "5020:5020"
     environment:
-      DB_CONN: "redis://@proxy_redis:6379/0"
-  proxy_redis:
-    image: "redis"
-    container_name: proxy_redis
+      - DB_CONN=${DB_CONN:-sqlite:////app/data/pool.db}
+      - PROXY_FETCHER_PATH=${PROXY_FETCHER_PATH:-/app/config/proxy_fetcher.json}
+    volumes:
+      - ./config/proxy_fetcher.json:/app/proxy_fetcher.json
+      - ./data/pool.db:/app/pool.db
+

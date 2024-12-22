@@ -8,7 +8,7 @@ PORT = 5020
 # ############### database config ###################
 # db connection uri
 # 修改为使用sqlite，不使用redis
-DB_CONN = 'sqlite:////Users/zhang-wangz/PycharmProjects/apipools/pool.db'
+DB_CONN = 'sqlite:////app/data/pool.db'
 
 # proxy table name
 # 仅对使用redis和ssdb生效(目前已经无用，暂时没重新适配redis和ssdb)
@@ -22,7 +22,8 @@ TABLE_NAME = 'use_proxy'
 #     "hour": -1,
 #     "minute": -1,
 #     "second": -1,
-PROXY_FETCHER_PATH = '/Users/zhang-wangz/PycharmProjects/apipools/proxy_fetcher.json'
+# /Users/zhang-wangz/PycharmProjects/apipools/
+PROXY_FETCHER_PATH = '/app/config/proxy_fetcher.json'
 
 # ############# proxy validator #################
 # 代理验证目标网站
