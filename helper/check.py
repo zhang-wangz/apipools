@@ -93,9 +93,15 @@ class DoValidator(object):
     @classmethod
     def regionGetter(cls, proxy):
         try:
-            url = 'https://searchplugin.csdn.net/api/v1/ip/get?ip=%s' % proxy.proxy.split(':')[0]
-            r = WebRequest().get(url=url, retry_time=1, timeout=2).json
-            return r['data']['address']
+            proxy_ =  proxy.proxy.split(':')[0]
+            urls = ['http://ip-api.com/json/%s' % proxy_, 'https://ipinfo.io/%s/json' % proxy_]
+            for url_ in urls:
+                try:
+                    r = WebRequest().get(url=url_, retry_time=2, timeout=2).json
+                    return "/".join([r["country"], r["city"]])
+                except Exception as e:
+                    print("regin url {} not available, err: {}".format(url_, e))
+                    continue
         except:
             return 'error'
 
@@ -170,3 +176,8 @@ def Checker(tp, queue):
 
     for thread in thread_list:
         thread.join()
+
+
+if __name__ == '__main__':
+    DoValidator.regionGetter("8.219.97.248")
+    pass

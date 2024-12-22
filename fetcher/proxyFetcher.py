@@ -349,7 +349,7 @@ class ProxyFetcher(object):
 
 if __name__ == '__main__':
     p = ProxyFetcher()
-    for u in [p.freeProxy19(), p.freeProxy18(),p.freeProxy17(), p.freeProxy16()]:
+    for u in [p.freeProxy21()]:
         print(u)
         for ip in u:
             print("ip:{}, socket4:{}, socket5:{}".format( ip, "", ""))
