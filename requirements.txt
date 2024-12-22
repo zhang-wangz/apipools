@@ -4,7 +4,6 @@ click
 Flask
 werkzeug
 requests
-gunicorn
 beautifulsoup4
 httpx
 sqlalchemy

@@ -96,34 +96,7 @@ def getCount():
 
 
 def runFlask():
-    if platform.system() == "Windows":
-        app.run(host=conf.serverHost, port=conf.serverPort)
-    else:
-        import gunicorn.app.base
-
-        class StandaloneApplication(gunicorn.app.base.BaseApplication):
-
-            def __init__(self, app, options=None):
-                self.options = options or {}
-                self.application = app
-                super(StandaloneApplication, self).__init__()
-
-            def load_config(self):
-                _config = dict([(key, value) for key, value in iteritems(self.options)
-                                if key in self.cfg.settings and value is not None])
-                for key, value in iteritems(_config):
-                    self.cfg.set(key.lower(), value)
-
-            def load(self):
-                return self.application
-
-        _options = {
-            'bind': '%s:%s' % (conf.serverHost, conf.serverPort),
-            'workers': 20,
-            'accesslog': '-',  # log to stdout
-            'access_log_format': '%(h)s %(l)s %(t)s "%(r)s" %(s)s "%(a)s"'
-        }
-        StandaloneApplication(app, _options).run()
+    app.run(host=conf.serverHost, port=conf.serverPort)
 
 
 if __name__ == '__main__':
