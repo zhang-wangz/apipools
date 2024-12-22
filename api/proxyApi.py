@@ -119,7 +119,7 @@ def runFlask():
 
         _options = {
             'bind': '%s:%s' % (conf.serverHost, conf.serverPort),
-            'workers': 4,
+            'workers': 20,
             'accesslog': '-',  # log to stdout
             'access_log_format': '%(h)s %(l)s %(t)s "%(r)s" %(s)s "%(a)s"'
         }
