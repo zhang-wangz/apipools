@@ -1,12 +1,8 @@
 # -*- coding: utf-8 -*-
 # !/usr/bin/env python
 
-
-import platform
 from werkzeug.wrappers import Response
 from flask import Flask, jsonify, request
-
-from util.six import iteritems
 from helper.proxy import Proxy
 from handler.proxyHandler import ProxyHandler
 from handler.configHandler import ConfigHandler
