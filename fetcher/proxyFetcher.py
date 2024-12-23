@@ -4,12 +4,23 @@ import urllib
 import urllib.parse
 from datetime import datetime
 from time import sleep, time
+
+from helper.check import DoValidator
 from util.webRequest import WebRequest
+
+
+def preValidator(p_):
+    # 抓取的时候就校验
+    if DoValidator.preValidator(proxy=p_):
+        print("catch is not ip content, skip")
+        return True
+    return False
 
 class ProxyFetcher(object):
     """
     proxy getter
     """
+
 
     @staticmethod
     def curl(url, test_cnt=3):
@@ -135,6 +146,7 @@ class ProxyFetcher(object):
     @staticmethod
     def freeProxy06():
         """ 稻壳代理 https://www.docip.net/ """
+        # TODO 探究是不是时间久了就不给抓了
         r = WebRequest().get("https://www.docip.net/data/free.json", timeout=10)
         try:
             for each in r.json['data']:
@@ -149,23 +161,25 @@ class ProxyFetcher(object):
         # 支持socket4， socket5
         # socks4, socks5
         # 暂时宕机了已经
-        url = 'https://gh-proxy.com/https://raw.githubusercontent.com/proxifly/free-proxy-list/main/proxies/protocols/{}/data.json'
+        url = 'https://raw.githubusercontent.com/proxifly/free-proxy-list/main/proxies/protocols/{}/data.json'
         urls = [url.format(u) for u in ["https", "http", "socks4", "socks5"]]
         for url_ in urls:
             r = WebRequest().get(url_, timeout=10)
             proxies = [f'{proxy["ip"]}:{proxy["port"]}' for proxy in r.json]
-            yield from proxies
+            if_ip = preValidator(proxies[0] if proxies and len(proxies) > 0 else "**##**")
+            yield from proxies if if_ip else []
 
     @staticmethod
     def freeProxy08():
         # https://github.com/TheSpeedX/PROXY-List
         # 支持 socket4， socket5
-        url = 'https://gh-proxy.com/https://raw.githubusercontent.com/TheSpeedX/SOCKS-List/master/{}.txt'
+        url = 'https://raw.githubusercontent.com/TheSpeedX/SOCKS-List/master/{}.txt'
         urls = [url.format(u) for u in ["http", "socks4", "socks5"]]
         for url_ in urls:
             r = WebRequest().get(url_, timeout=10)
             proxies = [proxy for proxy in r.text.split('\n') if proxy]
-            yield from proxies
+            if_ip = preValidator(proxies[0] if proxies and len(proxies) > 0 else "**##**")
+            yield from proxies if if_ip else []
 
     @staticmethod
     def freeProxy09():
@@ -187,14 +201,15 @@ class ProxyFetcher(object):
         for url in urls:
             r = WebRequest().get(url, timeout=10)
             proxies = [':'.join(proxy.split(':')[:2]) for proxy in r.text.split('\n') if proxy]
-            yield from proxies
+            if_ip = preValidator(proxies[0] if proxies and len(proxies) > 0 else "**##**")
+            yield from proxies if if_ip else []
 
     @staticmethod
     def freeProxy11():
+        # TODO 外站，需要时间，有时候不给予返回
         url = 'https://iproyal.com/free-proxy-list/?page=1&entries=100'
-
         while True:
-            r = WebRequest().get(url, timeout=10)
+            r = WebRequest().get(url, timeout=15)
             proxies = re.findall(
                 r'(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})</div><div class=\"flex items-center astro-lmapxigl\">(\d+)</div>',
                 r.text)
@@ -209,6 +224,7 @@ class ProxyFetcher(object):
 
     @staticmethod
     def freeProxy12():
+        # TODO 一天50次请求...
         urls = ['http://pubproxy.com/api/proxy?limit=5&https=true', 'http://pubproxy.com/api/proxy?limit=5&https=false']
         proxies = set()
         for url in urls:
@@ -223,6 +239,7 @@ class ProxyFetcher(object):
 
     @staticmethod
     def freeProxy13():
+        # TODO 外站，访问有限制
         urls = ['https://freeproxylist.cc/servers/']
         while True:
             try:
@@ -241,8 +258,9 @@ class ProxyFetcher(object):
 
     @staticmethod
     def freeProxy14():
+        # TODO 外站问题
         url = 'https://hasdata.com/free-proxy-list'
-        r = WebRequest().get(url, timeout=10)
+        r = WebRequest().get(url, timeout=15)
         proxies = re.findall(r'<tr><td>(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})</td><td>(\d+)</td><td>HTTP', r.text)
         yield from [':'.join(proxy) for proxy in proxies]
 
@@ -260,30 +278,32 @@ class ProxyFetcher(object):
     def freeProxy16():
         # https://github.com/hookzof/socks5_list
         # https://raw.githubusercontent.com/hookzof/socks5_list/master/proxy.txt
-        url = "https://gh-proxy.com/https://raw.githubusercontent.com/hookzof/socks5_list/master/proxy.txt"
+        url = "https://raw.githubusercontent.com/hookzof/socks5_list/master/proxy.txt"
         urls = [url]
         for url in urls:
             r = WebRequest().get(url, timeout=10)
             proxies = [':'.join(proxy.split(':')[:2]).replace("\r", "") for proxy in r.text.split('\n') if proxy]
-            yield from proxies
+            if_ip = preValidator(proxies[0] if proxies and len(proxies) > 0 else "**##**")
+            yield from proxies if if_ip else []
 
     @staticmethod
     def freeProxy17():
         # https://github.com/monosans/proxy-list
         # 1小时
-        url = "https://gh-proxy.com/https://raw.githubusercontent.com/monosans/proxy-list/main/proxies.json"
+        url = "https://raw.githubusercontent.com/monosans/proxy-list/main/proxies.json"
         urls = [url]
         for url in urls:
             r = WebRequest().get(url, timeout=10)
             proxies = [f'{proxy["host"]}:{proxy["port"]}' for proxy in r.json if proxy]
-            yield from proxies
+            if_ip = preValidator(proxies[0] if proxies and len(proxies) > 0 else "**##**")
+            yield from proxies if if_ip else []
 
 
     @staticmethod
     def freeProxy18():
         # https://github.com/mmpx12/proxy-list
         # 1小时
-        url = "https://gh-proxy.com/https://raw.githubusercontent.com/mmpx12/proxy-list/master/proxies.txt"
+        url = "https://raw.githubusercontent.com/mmpx12/proxy-list/master/proxies.txt"
         urls = [url]
         for url in urls:
             r = WebRequest().get(url, timeout=10)
@@ -303,53 +323,60 @@ class ProxyFetcher(object):
     def freeProxy19():
         # https://github.com/MuRongPIG/Proxy-Master
         # 1小时
-        url = "https://gh-proxy.com/https://raw.githubusercontent.com/MuRongPIG/Proxy-Master/main/{}.txt"
+        url = "https://raw.githubusercontent.com/MuRongPIG/Proxy-Master/main/{}.txt"
         urls = [url.format(ty) for ty in ['socks4_checked', 'socks5_checked', 'http_checked']]
         for url in urls:
             r = WebRequest().get(url, timeout=10)
             proxies = [":".join(proxy.split(':')[:2]) for proxy in r.text.split('\n') if proxy]
-            yield from proxies
+            if_ip = preValidator(proxies[0] if proxies and len(proxies) > 0 else "**##**")
+            yield from proxies if if_ip else []
 
     @staticmethod
     def freeProxy20():
         # https://github.com/ALIILAPRO/Proxy
+        # https://gh-proxy.com/
         # 1小时
-        url = "https://gh-proxy.com/https://raw.githubusercontent.com/ALIILAPRO/Proxy/main/{}.txt"
+        url = "https://raw.githubusercontent.com/ALIILAPRO/Proxy/main/{}.txt"
         urls = [url.format(ty) for ty in ['http', 'socks4', 'socks5']]
         for url in urls:
             r = WebRequest().get(url, timeout=10)
             proxies = [":".join(proxy.split(':')[:2]).replace('\r', '') for proxy in r.text.split('\n') if proxy]
-            yield from proxies
+            if_ip = preValidator(proxies[0] if proxies and len(proxies)>0 else "**##**")
+            yield from proxies if if_ip else []
+
 
     @staticmethod
     def freeProxy21():
         # https://github.com/Zaeem20/FREE_PROXIES_LIST
+        # https://gh-proxy.com/
         # 10min
-        url = "https://gh-proxy.com/https://raw.githubusercontent.com/Zaeem20/FREE_PROXIES_LIST/master/{}.txt"
+        url = "https://raw.githubusercontent.com/Zaeem20/FREE_PROXIES_LIST/master/{}.txt"
         urls = [url.format(ty) for ty in ['socks5', 'socks4', 'http', 'https']]
         for url in urls:
             r = WebRequest().get(url, timeout=10)
             proxies = [":".join(proxy.split(':')[:2]).replace('\r', '') for proxy in r.text.split('\n') if proxy]
-            yield from proxies
+            if_ip = preValidator(proxies[0] if proxies and len(proxies) > 0 else "**##**")
+            yield from proxies if if_ip else []
 
     @staticmethod
     def freeProxy22():
         # https://github.com/roosterkid/openproxylist
         # 1小时
-        url = "https://gh-proxy.com/https://raw.githubusercontent.com/roosterkid/openproxylist/main/{}.txt"
+        url = "https://raw.githubusercontent.com/roosterkid/openproxylist/main/{}.txt"
         #  'HTTPS'
         urls = [url.format(ty) for ty in ['SOCKS5', 'SOCKS4', 'HTTPS']]
         for url in urls:
             r = WebRequest().get(url, timeout=10)
             proxies = re.findall(r'(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}):[\s\S]*?(\d+)', r.text)
             proxies = [':'.join(proxy) for proxy in proxies]
-            yield from proxies
+            if_ip = preValidator(proxies[0] if proxies and len(proxies) > 0 else "**##**")
+            yield from proxies if if_ip else []
     
 #
 
 if __name__ == '__main__':
     p = ProxyFetcher()
-    for u in [p.freeProxy21()]:
+    for u in [p.freeProxy07()]:
         print(u)
         for ip in u:
             print("ip:{}, socket4:{}, socket5:{}".format( ip, "", ""))

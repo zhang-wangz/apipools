@@ -8,12 +8,11 @@ COPY ./requirements.txt .
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories
 
 # timezone
-RUN apk add -U tzdata && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && apk del tzdata
+RUN apk add -U tzdata && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 
 # runtime environment
 RUN apk add musl-dev gcc libxml2-dev libxslt-dev curl && \
-    pip install --no-cache-dir -r requirements.txt && \
-    apk del gcc musl-dev
+    pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 

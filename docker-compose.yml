@@ -11,4 +11,5 @@ services:
     volumes:
       - ./config/proxy_fetcher.json:/app/config/proxy_fetcher.json
       - ./data/pool.db:/app/data/pool.db
+      - ./log:/app/log
 

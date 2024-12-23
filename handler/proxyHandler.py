@@ -23,6 +23,18 @@ class ProxyHandler(object):
         proxy = self.db.get(https, **kwargs)
         return Proxy.createFromJson(proxy) if proxy else None
 
+
+    def getLatest(self, limit, offset, **kwargs):
+        """
+        return proxy
+        Args:
+            limit: 1
+            offset: 0
+        Returns:
+        """
+        proxies = self.db.getLatest(limit, offset, **kwargs)
+        return [Proxy.createFromJson(_) for _ in proxies]
+
     def pop(self, https, **kwargs):
         """
         return and delete a useful proxy

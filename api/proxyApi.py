@@ -46,6 +46,18 @@ def get():
     return proxy.to_dict if proxy else {"code": 0, "src": "no proxy"}
 
 
+@app.route('/getLatest/')
+def getLatest():
+    limit = request.args.get("limit", 1)
+    offset = request.args.get("offset", 0)
+    https = request.args.get("type", "").lower() == 'https'
+    socket4 = request.args.get("type", "").lower() == 'socket4'
+    socket5 = request.args.get("type", "").lower() == 'socket5'
+    proxies = proxy_handler.getLatest(limit=limit, offset=offset, https=https, socket4=socket4, socket5=socket5)
+    return jsonify([_.to_dict for _ in proxies]) if len(proxies)> 0 \
+        else {"code": 0, "src": "no proxy"}
+
+
 @app.route('/pop/')
 def pop():
     https = request.args.get("type", "").lower() == 'https'

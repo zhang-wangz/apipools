@@ -99,6 +99,8 @@ class DoValidator(object):
                 except Exception as e:
                     print("regin url {} not available, err: {}".format(url_, e))
                     continue
+            # 两个都联通失败返回error
+            return 'error'
         except:
             return 'error'
 
@@ -176,5 +178,5 @@ def Checker(tp, queue):
 
 
 if __name__ == '__main__':
-    DoValidator.regionGetter("8.219.97.248")
+    # DoValidator.regionGetter("8.219.97.248")
     pass

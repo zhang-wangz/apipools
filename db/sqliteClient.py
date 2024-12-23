@@ -37,39 +37,60 @@ class SqliteClient:
             '''))
             conn.commit()
 
-    def get_https(self):
+    def get_https(self, limit=1, offset=0, is_random=True, fetch_one=True):
         with self.engine.connect() as conn:
-            query = "SELECT * FROM proxies WHERE https = true ORDER BY RANDOM() LIMIT 1"
+            query_p = 'RANDOM()' if is_random else 'last_time'
+            query = "SELECT * FROM proxies WHERE https = true ORDER BY {} LIMIT {} OFFSET {}".format(query_p, limit, offset)
+            if not fetch_one:
+                results = conn.execute(text(query)).fetchall()
+                return [dict(row._mapping) for row in results]
             result = conn.execute(text(query)).fetchone()
             return dict(result._mapping) if result else None
 
-    def get_sockets4(self):
+    def get_sockets4(self, limit=1, offset=0, is_random=True, fetch_one=True):
         with self.engine.connect() as conn:
-            query = "SELECT * FROM proxies WHERE socket4 = true ORDER BY RANDOM() LIMIT 1"
+            query_p = 'RANDOM()' if is_random else 'last_time'
+            query = "SELECT * FROM proxies WHERE socket4 = true ORDER BY {} LIMIT {} OFFSET {}".format(query_p, limit, offset)
+            if not fetch_one:
+                results = conn.execute(text(query)).fetchall()
+                return [dict(row._mapping) for row in results]
             result = conn.execute(text(query)).fetchone()
             return dict(result._mapping) if result else None
 
-    def get_sockets5(self):
+    def get_sockets5(self, limit=1, offset=0, is_random=True, fetch_one=True):
         with self.engine.connect() as conn:
-            query = "SELECT * FROM proxies WHERE socket5 = true ORDER BY RANDOM() LIMIT 1"
+            query_p = 'RANDOM()' if is_random else 'last_time'
+            query = "SELECT * FROM proxies WHERE socket5 = true ORDER BY {} LIMIT {} OFFSET {}".format(query_p, limit, offset)
+            if not fetch_one:
+                results = conn.execute(text(query)).fetchall()
+                return [dict(row._mapping) for row in results]
             result = conn.execute(text(query)).fetchone()
             return dict(result._mapping) if result else None
 
-    def get(self, https=False, socket4=False, socket5=False) -> Optional[Proxy]:
+    def get(self, https=False, socket4=False, socket5=False,
+            limit=1, offset=0, is_random=True, fetch_one=True) -> Optional[Proxy]:
         """
-        返回一个代理, 如果有指定，则返回对应的，否则随机返回一个
+        返回一个代理, 如果有指定，则返回对应的，否则随机返回
         :return:
         """
         if https:
-            return self.get_https()
+            return self.get_https(limit=limit, offset=offset, is_random=is_random, fetch_one=fetch_one)
         if socket4:
-            return self.get_sockets4()
+            return self.get_sockets4(limit=limit, offset=offset, is_random=is_random, fetch_one=fetch_one)
         if socket5:
-            return self.get_sockets5()
+            return self.get_sockets5(limit=limit, offset=offset, is_random=is_random, fetch_one=fetch_one)
         with self.engine.connect() as conn:
-            query = "SELECT * FROM proxies ORDER BY RANDOM() LIMIT 1"
-            result = conn.execute(text(query), {"https": https}).fetchone()
+            query_p = 'RANDOM()' if is_random else 'last_time'
+            query = "SELECT * FROM proxies ORDER BY {} LIMIT {} OFFSET {}".format(query_p, limit, offset)
+            if not fetch_one:
+                results = conn.execute(text(query)).fetchall()
+                return [dict(row._mapping) for row in results]
+            result = conn.execute(text(query)).fetchone()
             return dict(result._mapping) if result else None
+
+    def getLatest(self, limit, offset, https=False, socket4=False, socket5=False):
+        return self.get(limit=limit, offset=offset, is_random=False, fetch_one=False,
+                        https=https, socket4=socket4, socket5=socket5)
 
     def put(self, proxy_obj):
         """
@@ -91,7 +112,7 @@ class SqliteClient:
         :param proxy_obj:
         :return:
         """
-        put(self, proxy_obj)
+        self.put(proxy_obj)
 
     def delete(self, proxy_str):
         """
