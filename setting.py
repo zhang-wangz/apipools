@@ -27,7 +27,7 @@ PROXY_FETCHER_PATH = '/app/config/proxy_fetcher.json'
 
 # ############# proxy validator #################
 # 代理验证目标网站
-HTTP_URL = "http://httpbin.org/"
+HTTP_URL = "http://httpbin.org/ip"
 
 HTTPS_URL = "https://httpbin.org/ip"
 
@@ -35,7 +35,7 @@ HTTPS_URL = "https://httpbin.org/ip"
 VERIFY_TIMEOUT = 10
 
 # 近PROXY_CHECK_COUNT次校验中允许的最大失败次数,超过则剔除代理
-MAX_FAIL_COUNT = 0
+MAX_FAIL_COUNT = 10
 
 # proxyCheck时代理数量少于POOL_SIZE_MIN触发抓取
 POOL_SIZE_MIN = 20
