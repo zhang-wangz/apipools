@@ -313,7 +313,7 @@ class ProxyFetcher(object):
                     continue
                 try:
                     proxy = proxy.split('//')[1]
-                    proxies.append(proxy)
+                    proxies.append(proxy.replace("\r", ""))
                 except Exception:
                     continue
             yield from proxies
@@ -376,7 +376,7 @@ class ProxyFetcher(object):
 
 if __name__ == '__main__':
     p = ProxyFetcher()
-    for u in [p.freeProxy07()]:
+    for u in [p.freeProxy18()]:
         print(u)
         for ip in u:
             print("ip:{}, socket4:{}, socket5:{}".format( ip, "", ""))

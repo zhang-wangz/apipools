@@ -39,7 +39,7 @@ class SqliteClient:
 
     def get_https(self, limit=1, offset=0, is_random=True, fetch_one=True):
         with self.engine.connect() as conn:
-            query_p = 'RANDOM()' if is_random else 'last_time'
+            query_p = 'RANDOM()' if is_random else 'last_time desc'
             query = "SELECT * FROM proxies WHERE https = true ORDER BY {} LIMIT {} OFFSET {}".format(query_p, limit, offset)
             if not fetch_one:
                 results = conn.execute(text(query)).fetchall()
@@ -49,7 +49,7 @@ class SqliteClient:
 
     def get_sockets4(self, limit=1, offset=0, is_random=True, fetch_one=True):
         with self.engine.connect() as conn:
-            query_p = 'RANDOM()' if is_random else 'last_time'
+            query_p = 'RANDOM()' if is_random else 'last_time desc'
             query = "SELECT * FROM proxies WHERE socket4 = true ORDER BY {} LIMIT {} OFFSET {}".format(query_p, limit, offset)
             if not fetch_one:
                 results = conn.execute(text(query)).fetchall()
@@ -59,7 +59,7 @@ class SqliteClient:
 
     def get_sockets5(self, limit=1, offset=0, is_random=True, fetch_one=True):
         with self.engine.connect() as conn:
-            query_p = 'RANDOM()' if is_random else 'last_time'
+            query_p = 'RANDOM()' if is_random else 'last_time desc'
             query = "SELECT * FROM proxies WHERE socket5 = true ORDER BY {} LIMIT {} OFFSET {}".format(query_p, limit, offset)
             if not fetch_one:
                 results = conn.execute(text(query)).fetchall()
@@ -80,7 +80,7 @@ class SqliteClient:
         if socket5:
             return self.get_sockets5(limit=limit, offset=offset, is_random=is_random, fetch_one=fetch_one)
         with self.engine.connect() as conn:
-            query_p = 'RANDOM()' if is_random else 'last_time'
+            query_p = 'RANDOM()' if is_random else 'last_time desc'
             query = "SELECT * FROM proxies ORDER BY {} LIMIT {} OFFSET {}".format(query_p, limit, offset)
             if not fetch_one:
                 results = conn.execute(text(query)).fetchall()

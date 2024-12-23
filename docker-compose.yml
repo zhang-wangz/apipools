@@ -1,7 +1,9 @@
 version: '2'
 services:
   proxy_pool:
-    build: .
+    build:
+      context: .
+      no_cache: true
     container_name: proxy_pool
     ports:
       - "5020:5020"
