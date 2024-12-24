@@ -40,6 +40,14 @@ MAX_FAIL_COUNT = 10
 # proxyCheck时代理数量少于POOL_SIZE_MIN触发抓取
 POOL_SIZE_MIN = 20
 
+# 调度所使用到的一些参数
+FETCH_THREAD_NUM = 30
+FETCH_WORKER_NUM = 30
+CHECK_THREAD_NUM = 20
+CHECK_WORKER_NUM = 20
+JOB_MAX_INSTANCES = 10
+JOB_COALESCE = False
+
 # ############# proxy attributes #################
 # 是否启用代理地域属性
 PROXY_REGION = True

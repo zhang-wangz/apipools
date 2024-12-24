@@ -158,15 +158,16 @@ class _ThreadChecker(Thread):
                 self.proxy_handler.put(proxy)
 
 
-def Checker(tp, queue):
+def Checker(tp, queue, num_=25):
     """
     run Proxy ThreadChecker
     :param tp: raw/use
     :param queue: Proxy Queue
+    :param num_: num_
     :return:
     """
     thread_list = list()
-    for index in range(20):
+    for index in range(num_):
         thread_list.append(_ThreadChecker(tp, queue, "thread_%s" % str(index).zfill(2)))
 
     for thread in thread_list:

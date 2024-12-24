@@ -21,11 +21,12 @@ from handler.configHandler import ConfigHandler
 def __runProxyFetch():
     proxy_queue = Queue()
     proxy_fetcher = Fetcher()
+    conf = ConfigHandler()
 
     for proxy in proxy_fetcher.run():
         proxy_queue.put(proxy)
 
-    Checker("raw", proxy_queue)
+    Checker("raw", proxy_queue, conf.fetchThreadNum)
 
 
 def __runProxyCheck():
@@ -35,36 +36,33 @@ def __runProxyCheck():
         __runProxyFetch()
     for proxy in proxy_handler.getAll():
         proxy_queue.put(proxy)
-    Checker("use", proxy_queue)
+    Checker("use", proxy_queue, proxy_handler.conf.checkThreadNum)
 
 
 def runScheduler():
-    __runProxyCheck()
     __runProxyFetch()
-
-    timezone = ConfigHandler().timezone
+    __runProxyCheck()
+    conf = ConfigHandler()
+    timezone = conf.timezone
     scheduler_log = LogHandler("scheduler")
     scheduler = BlockingScheduler(logger=scheduler_log, timezone=timezone)
 
-    # 为不同的任务分配不同的执行器
     executors = {
-        'fetch_executor': {'type': 'threadpool', 'max_workers': 20},  # 为 __runProxyFetch 配置更多线程
-        'check_executor': {'type': 'processpool', 'max_workers': 20},  # 为 __runProxyCheck 配置进程池（适合 CPU 密集型任务）
+        'fetch_executor': {'type': 'threadpool', 'max_workers': conf.fetchWorkerNum},
+        'check_executor': {'type': 'threadpool', 'max_workers': conf.checkWorkerNum},
         'processpool': ProcessPoolExecutor(max_workers=5)
     }
-
     # 配置任务的默认参数
     job_defaults = {
-        'coalesce': False,
-        'max_instances': 15
+        'coalesce': conf.jobCoalesce,
+        'max_instances': conf.jobMaxInstances
     }
     # 配置调度器
     scheduler.configure(executors=executors, job_defaults=job_defaults, timezone=timezone)
-
     # 为每个任务指定不同的执行器，确保互不干扰
-    scheduler.add_job(__runProxyFetch, 'interval', minutes=5, id="proxy_fetch", name="proxy采集",
+    scheduler.add_job(__runProxyFetch, 'interval', minutes=10, id="proxy_fetch", name="proxy采集",
                       executor='fetch_executor')
-    scheduler.add_job(__runProxyCheck, 'interval', minutes=2, id="proxy_check", name="proxy检查",
+    scheduler.add_job(__runProxyCheck, 'interval', minutes=3, id="proxy_check", name="proxy检查",
                       executor='check_executor')
     # 启动调度器
     scheduler.start()

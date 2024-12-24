@@ -62,6 +62,30 @@ class ConfigHandler(withMetaclass(Singleton)):
         return int(os.getenv("MAX_FAIL_COUNT", setting.MAX_FAIL_COUNT))
 
     @LazyProperty
+    def fetchThreadNum(self):
+        return int(os.getenv("FETCH_THREAD_NUM", setting.FETCH_THREAD_NUM))
+
+    @LazyProperty
+    def fetchWorkerNum(self):
+        return int(os.getenv("FETCH_WORKER_NUM", setting.FETCH_WORKER_NUM))
+
+    @LazyProperty
+    def checkThreadNum(self):
+        return int(os.getenv("CHECK_THREAD_NUM", setting.CHECK_THREAD_NUM))
+
+    @LazyProperty
+    def checkWorkerNum(self):
+        return int(os.getenv("CHECK_WORKER_NUM", setting.CHECK_WORKER_NUM))
+
+    @LazyProperty
+    def jobMaxInstances(self):
+        return int(os.getenv("JOB_MAX_INSTANCES", setting.JOB_MAX_INSTANCES))
+
+    @LazyProperty
+    def jobCoalesce(self):
+        return bool(os.getenv("JOB_COALESCE", setting.JOB_COALESCE))
+
+    @LazyProperty
     def poolSizeMin(self):
         return int(os.getenv("POOL_SIZE_MIN", setting.POOL_SIZE_MIN))
 
