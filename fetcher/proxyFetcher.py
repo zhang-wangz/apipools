@@ -44,31 +44,12 @@ class ProxyFetcher(object):
                     test_cnt -= 1
                     sleep(5)
 
-    @staticmethod
-    def freeProxy01():
-        """ 站大爷, requests几乎不能用，使用curl获取内容 """
-        url = 'https://www.zdaye.com/free/'
-
-        # 第一页
-        rsp = ProxyFetcher.curl(url)
-        proxies = re.findall(r'<tr>\s*<td>(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})</td>\s*<td>(\d+)</td>', rsp)
-        yield from [':'.join(proxy) for proxy in proxies]
-
-        # 后面几页
-        pages = re.findall(r'\s+href=\"/free/(\d+)/\"', rsp)
-        pages = list(dict.fromkeys(pages))
-        for page in pages:
-            page_url = urllib.parse.urljoin(url, page)
-            sleep(5)
-            r = ProxyFetcher.curl(page_url)
-            proxies = re.findall(r'<tr>\s*<td>(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})</td>\s*<td>(\d+)</td>', r)
-            yield from [':'.join(proxy) for proxy in proxies]
-
 
     @staticmethod
-    def freeProxy02(page_count=1):
+    def freeProxy02():
         """ 快代理 https://www.kuaidaili.com """
-        categories = ['inha', 'intr', 'fps']
+        # 'inha', 'intr'已经不再更新
+        categories = ['dps', 'fps']
         for category in categories:
             max_page = 1
             page = 1
@@ -83,13 +64,14 @@ class ProxyFetcher(object):
                 res = re.findall(r'let\s+totalCount\s\=\s+[\'\"](\d+)[\'\"]', r.text)
                 if res and type(res) == list and len(res) > 0:
                     total = res[0]
-                    max_page = min(int(total) / 12, 10)
+                    max_page = min(int(total) / 12, 2)
                 page += 1
 
 
     @staticmethod
     def freeProxy03():
         """ 云代理 """
+        # 一天更新一次
         stypes = ('1', '2')
         for stype in stypes:
             url = f'http://www.ip3366.net/free/?stype={stype}'
@@ -109,6 +91,7 @@ class ProxyFetcher(object):
     @staticmethod
     def freeProxy04():
         """ 小幻代理 """
+        # 一小时一次
         now = datetime.now()
         url = f'https://ip.ihuan.me/today/{now.year}/{now.month:02}/{now.day:02}/{now.hour:02}.html'
         r = WebRequest().get(url, timeout=10, useRequests=False)
@@ -130,7 +113,7 @@ class ProxyFetcher(object):
             proxies = re.findall(
                 r'<td.*?>[\s\S]*?(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})[\s\S]*?</td>[\s\S]*?<td.*?>[\s\S]*?(\d+)[\s\S]*?</td>',
                 r.text)
-            if not proxies:
+            if not proxies or len(proxies) == 0:
                 break
 
             yield from [':'.join(proxy) for proxy in proxies]
@@ -146,7 +129,7 @@ class ProxyFetcher(object):
     @staticmethod
     def freeProxy06():
         """ 稻壳代理 https://www.docip.net/ """
-        # TODO 探究是不是时间久了就不给抓了
+        # 3小时抓1次
         r = WebRequest().get("https://www.docip.net/data/free.json", timeout=10)
         try:
             for each in r.json['data']:
@@ -155,19 +138,19 @@ class ProxyFetcher(object):
             print(e)
 
 
-    @staticmethod
-    def freeProxy07():
-        # https://github.com/proxifly/free-proxy-list
-        # 支持socket4， socket5
-        # socks4, socks5
-        # 暂时宕机了已经
-        url = 'https://raw.githubusercontent.com/proxifly/free-proxy-list/main/proxies/protocols/{}/data.json'
-        urls = [url.format(u) for u in ["https", "http", "socks4", "socks5"]]
-        for url_ in urls:
-            r = WebRequest().get(url_, timeout=10)
-            proxies = [f'{proxy["ip"]}:{proxy["port"]}' for proxy in r.json]
-            if_ip = preValidator(proxies[0] if proxies and len(proxies) > 0 else "**##**")
-            yield from proxies if if_ip else []
+    # @staticmethod
+    # def freeProxy07():
+    #     # https://github.com/proxifly/free-proxy-list
+    #     # 支持socket4， socket5
+    #     # socks4, socks5
+    #     # 暂时宕机了已经
+    #     url = 'https://raw.githubusercontent.com/proxifly/free-proxy-list/main/proxies/protocols/{}/data.json'
+    #     urls = [url.format(u) for u in ["https", "http", "socks4", "socks5"]]
+    #     for url_ in urls:
+    #         r = WebRequest().get(url_, timeout=10)
+    #         proxies = [f'{proxy["ip"]}:{proxy["port"]}' for proxy in r.json]
+    #         if_ip = preValidator(proxies[0] if proxies and len(proxies) > 0 else "**##**")
+    #         yield from proxies if if_ip else []
 
     @staticmethod
     def freeProxy08():
@@ -376,7 +359,7 @@ class ProxyFetcher(object):
 
 if __name__ == '__main__':
     p = ProxyFetcher()
-    for u in [p.freeProxy18()]:
+    for u in [p.freeProxy03()]:
         print(u)
         for ip in u:
             print("ip:{}, socket4:{}, socket5:{}".format( ip, "", ""))
