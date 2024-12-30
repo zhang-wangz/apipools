@@ -147,10 +147,23 @@ class _ThreadChecker(Thread):
             self.proxy_handler.put(proxy)
         else:
             if proxy.fail_count > self.conf.maxFailCount:
-                self.log.info('UseProxyCheck - {}: {} fail, count {} delete'.format(self.name,
-                                                                                    proxy.proxy.ljust(23),
-                                                                                    proxy.fail_count))
-                self.proxy_handler.delete(proxy)
+                if not (proxy.https or proxy.socket4 or proxy.socket5):
+                    self.log.info('UseProxyCheck - {}: {} fail, count {} delete'.format(self.name,
+                                                                                        proxy.proxy.ljust(23),
+                                                                                        proxy.fail_count))
+                    self.proxy_handler.delete(proxy)
+                if proxy.https:
+                    self.log.info('UseProxyCheck - {}: {} fail, count {}, is https keep'.format(self.name,
+                                                                                        proxy.proxy.ljust(23),
+                                                                                        proxy.fail_count))
+                if proxy.socket4:
+                    self.log.info('UseProxyCheck - {}: {} fail, count {}, is socket4 keep'.format(self.name,
+                                                                                                proxy.proxy.ljust(23),
+                                                                                                proxy.fail_count))
+                if proxy.socket5:
+                    self.log.info('UseProxyCheck - {}: {} fail, count {}, is socket5 keep'.format(self.name,
+                                                                                                proxy.proxy.ljust(23),
+                                                                                                proxy.fail_count))
             else:
                 self.log.info('UseProxyCheck - {}: {} fail, count {} keep'.format(self.name,
                                                                                   proxy.proxy.ljust(23),
